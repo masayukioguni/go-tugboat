@@ -1,0 +1,19 @@
+{
+	"ImportPath": "github.com/masayukioguni/go-tugboat",
+	"GoVersion": "go1.3.3",
+	"Deps": [
+		{
+			"ImportPath": "github.com/hashicorp/hcl",
+			"Rev": "2c88e7ea6e73ce6455c11cc8a8375e6220913f7f"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/terraform/helper/multierror",
+			"Comment": "v0.3.1-104-ga5d444b",
+			"Rev": "a5d444b8e377eadcb1259d4d99a5b4904547f191"
+		},
+		{
+			"ImportPath": "github.com/mitchellh/cli",
+			"Rev": "e3c2e3d39391e9beb9660ccd6b4bd9a2f38dd8a0"
+		}
+	]
+}
