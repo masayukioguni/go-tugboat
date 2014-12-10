@@ -29,7 +29,7 @@ func (c *AuthorizeCommand) ask(text string, defaultText string) string {
 }
 func (c *AuthorizeCommand) Run(args []string) int {
 	apikey := c.ask("Entser your API key:", "input apikey")
-	fmt.Printf(`To retrieve region, image, size and key ID's, you can use the corresponding go-tugboat command,
+	fmt.Println(`To retrieve region, image, size and key ID's, you can use the corresponding go-tugboat command,
 such as go-tugboat images. Defaults can be changed at any time in your ~/.go-tugboat/config.yaml configuration file.\n`)
 
 	region := c.ask("Enter your default region (optional, defaults to nyc3 (New York)):", "nyc3")
