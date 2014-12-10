@@ -97,9 +97,12 @@ func (c *SSHCommand) Run(args []string) int {
 
 	droplet, err := c.isMatchName(flags.Name, droplets)
 
-	s := fmt.Sprintf("root@%s", GetV4IPAddress(*droplet))
+	if err != nil {
+		fmt.Printf("error: %s not found \n\n", flags.Name)
+		return 1
+	}
 
-	fmt.Printf("%v\n\n", s)
+	s := fmt.Sprintf("root@%s", GetV4IPAddress(*droplet)[0])
 
 	cmd := exec.Command("ssh", s)
 	cmd.Stdin = os.Stdin
