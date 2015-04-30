@@ -1,38 +1,44 @@
-BIN = go-tugboat
+DEPS = $(shell go list -f '{{range .TestImports}}{{.}} {{end}}' ./...)
+PACKAGES = $(shell go list ./...)
+VETARGS?=-asmdecl -atomic -bool -buildtags -copylocks -methods \
+				 -nilfunc -printf -rangeloops -shift -structtags -unsafeptr
 
-all: clean build test
+setup: 
+	@go get github.com/axw/gocov/gocov
+	@go get gopkg.in/matm/v1/gocov-html
 
-setup:
-	go get github.com/tools/godep
-	go get github.com/masayukioguni/go-digitalocean/digitalocean
-	go get github.com/golang/lint/golint
-
-test: deps
-	go test $(TESTFLAGS) ./...
-
-build: deps
-	go build -o build/$(BIN)
-
-run: build
-	./build/$(BIN)
+all: deps format
+	
+cov:
+	gocov test ./command| gocov-html > /tmp/coverage.html
+	open /tmp/coverage.html
 
 deps:
-	godep get 
+	@echo "--> Installing build dependencies"
+	@go get -d -f -u -v ./...
+	@echo $(DEPS) | xargs -n1 go get -d -f -u
 
-clean:
-	rm -f build/$(BIN)
-	go clean
+test:
+	@echo "--> Running go test"
+	go list ./... | xargs -n1 go test
 
-lint:
-	golint ./...
+cover:
+	@echo "--> Running go test --cover"
+	go list ./... | xargs -n1 go test --cover
+
+format:
+	@echo "--> Running go fmt"
+	@go fmt $(PACKAGES)
 
 vet:
-	go vet ./...
+	@go tool vet 2>/dev/null ; if [ $$? -eq 3 ]; then \
+		go get golang.org/x/tools/cmd/vet; \
+	fi
+	@echo "--> Running go tool vet $(VETARGS) ."
+	@go tool vet $(VETARGS) . ; if [ $$? -eq 1 ]; then \
+		echo ""; \
+		echo "Vet found suspicious constructs. Please check the reported constructs"; \
+		echo "and fix them if necessary before submitting the code for reviewal."; \
+	fi
 
-coverage:
-	bash coverage
-	rm api/profile.coverprofile
-	rm config/profile.coverprofile
-	rm gover.coverprofile
-
-.PHONY: setup test build run deps clean lint vet coverage
+.PHONY: all cov deps test vet setup
